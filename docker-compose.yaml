@@ -45,5 +45,14 @@ services:
     depends_on:
       - prometheus
 
+  go-app:
+    container_name: go-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+
 volumes:
   mysql-data:
