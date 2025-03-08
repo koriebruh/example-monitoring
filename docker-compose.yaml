@@ -1,0 +1,49 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: testdb
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
+  mysql_exporter:
+    image: prom/mysqld-exporter
+    container_name: mysql_exporter
+    environment:
+      - DATA_SOURCE_NAME=root:rootpassword@tcp(mysql:3306)/
+    ports:
+      - "9104:9104"
+    depends_on:
+      - mysql
+    command:
+      - --config.my-cnf=/cfg/.my.cnf
+      - --mysqld.address=localhost:3306
+    volumes:
+      - "./.my.cnf:/cfg/.my.cnf"
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    depends_on:
+      - prometheus
+
+volumes:
+  mysql-data:
