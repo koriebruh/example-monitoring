@@ -1,0 +1,110 @@
+basePath: /api/v1
+definitions:
+  entity.ErrorResponse:
+    properties:
+      message:
+        example: Invalid Username and Password
+        type: string
+    type: object
+  entity.MsgResponse:
+    properties:
+      message:
+        example: user123 login successfully
+        type: string
+    type: object
+  entity.User:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: A Tag service API in Go using Gin framework
+  title: Tag Example Monitoring Service
+  version: "1.0"
+paths:
+  /login:
+    post:
+      description: Validates user credentials and logs the user in if the credentials
+        are correct.
+      parameters:
+      - description: User credentials (username and password)
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/entity.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success message indicating user login
+          schema:
+            $ref: '#/definitions/entity.MsgResponse'
+        "400":
+          description: Error message indicating invalid credentials
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+        "422":
+          description: Error message indicating invalid JSON format
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+      summary: User Login
+      tags:
+      - user
+  /register:
+    post:
+      description: Registers a new user by saving the provided user credentials to
+        the database.
+      parameters:
+      - description: User credentials (username, password, etc.)
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/entity.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success message indicating successful registration
+          schema:
+            $ref: '#/definitions/entity.MsgResponse'
+        "400":
+          description: Error message indicating invalid username or password
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+        "422":
+          description: Error message indicating invalid JSON format
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+      summary: User Registration
+      tags:
+      - user
+  /users:
+    get:
+      description: Retrieves all users from the database.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of users in the database
+          schema:
+            items:
+              $ref: '#/definitions/entity.User'
+            type: array
+        "422":
+          description: Error message indicating no users found
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+        "500":
+          description: Error message indicating internal server error
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+      summary: Get Users
+      tags:
+      - user
+swagger: "2.0"

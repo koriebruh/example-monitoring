@@ -1,4 +1,4 @@
-FROM golang:1.22.6
+FROM golang:1.24.1
 
 LABEL authors="KORIEBRUH AKA JAMAL"
 # Set working directory
